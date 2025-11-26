@@ -1,24 +1,18 @@
 import { Router } from 'express'
 import SensorData from '../models/SensorData.js'
-import { authenticateToken, requireAuth } from '../middleware/auth.js'
 
 const router = Router()
 
-// All routes require authentication middleware (but allows guests)
-router.use(authenticateToken)
-
 // POST /api/sensor-data - Create new sensor reading
-router.post('/', requireAuth, async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { o2Reading, bodyTemperature, pulseReading, timestamp } = req.body
-        const userId = req.user.id
 
         if (!o2Reading || !bodyTemperature || !pulseReading) {
             return res.status(400).json({ message: 'Missing required fields: o2Reading, bodyTemperature, pulseReading' })
         }
 
         const sensorData = await SensorData.create({
-            userId,
             o2Reading: Number(o2Reading),
             bodyTemperature: Number(bodyTemperature),
             pulseReading: Number(pulseReading),
@@ -39,10 +33,9 @@ router.post('/', requireAuth, async (req, res) => {
     }
 })
 
-// GET /api/sensor-data - Get sensor data for authenticated user
-router.get('/', requireAuth, async (req, res) => {
+// GET /api/sensor-data - Get sensor data
+router.get('/', async (req, res) => {
     try {
-        const userId = req.user.id
         const { range = '24h', start, end, limit } = req.query
 
         // Build date range
@@ -54,15 +47,12 @@ router.get('/', requireAuth, async (req, res) => {
             startDate = new Date(start)
             endDate = new Date(end)
         } else {
-            if (range === '24h') startDate.setHours(now.getHours() - 24)
-            else if (range === '7d') startDate.setDate(now.getDate() - 7)
-            else if (range === '30d') startDate.setDate(now.getDate() - 30)
-            else startDate.setHours(now.getHours() - 24)
+            // Always use last 24 hours
+            startDate.setHours(now.getHours() - 24)
         }
 
         // Build query
         const query = {
-            userId,
             timestamp: { $gte: startDate, $lte: endDate }
         }
 
@@ -91,11 +81,10 @@ router.get('/', requireAuth, async (req, res) => {
     }
 })
 
-// GET /api/sensor-data/latest - Get latest sensor reading for user
-router.get('/latest', requireAuth, async (req, res) => {
+// GET /api/sensor-data/latest - Get latest sensor reading
+router.get('/latest', async (req, res) => {
     try {
-        const userId = req.user.id
-        const latest = await SensorData.findOne({ userId })
+        const latest = await SensorData.findOne()
             .sort({ timestamp: -1 })
             .select('o2Reading bodyTemperature pulseReading timestamp')
 

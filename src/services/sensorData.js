@@ -7,50 +7,27 @@ const FIELD_MAP = {
     temperature: 'field3',
 };
 
-function getAuthToken() {
-    return localStorage.getItem('phms_token') || null
-}
-
-function getAuthHeaders() {
-    const token = getAuthToken()
-    const headers = {
+function getHeaders() {
+    return {
         'Content-Type': 'application/json',
     }
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-    }
-    return headers
 }
 
-export async function fetchSensorData({
-    range = '24h',
-} = {}) {
+export async function fetchSensorData() {
     const now = new Date()
     const end = now
     let start = new Date(now)
-    
-    if (range === '24h') start.setHours(now.getHours() - 24)
-    else if (range === '7d') start.setDate(now.getDate() - 7)
-    else if (range === '30d') start.setDate(now.getDate() - 30)
-    else start.setHours(now.getHours() - 24)
+
+    // Always use last 24 hours
+    start.setHours(now.getHours() - 24)
 
     try {
-        const token = getAuthToken()
-        if (!token) {
-            // No auth token - return empty data or fallback
-            return { feeds: [] }
-        }
-
-        const url = `/api/sensor-data?range=${range}`
+        const url = `/api/sensor-data?range=24h`
         const res = await fetch(url, {
-            headers: getAuthHeaders(),
+            headers: getHeaders(),
         })
 
         if (!res.ok) {
-            if (res.status === 401) {
-                // User not authenticated - return empty data
-                return { feeds: [] }
-            }
             throw new Error(`HTTP ${res.status}`)
         }
 
@@ -88,15 +65,10 @@ export function latestValues(series) {
 
 export async function createSensorReading({ o2Reading, bodyTemperature, pulseReading, timestamp }) {
     try {
-        const token = getAuthToken()
-        if (!token) {
-            throw new Error('Authentication required')
-        }
-
         const url = `/api/sensor-data`
         const res = await fetch(url, {
             method: 'POST',
-            headers: getAuthHeaders(),
+            headers: getHeaders(),
             body: JSON.stringify({
                 o2Reading,
                 bodyTemperature,

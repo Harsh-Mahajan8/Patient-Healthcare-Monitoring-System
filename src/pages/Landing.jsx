@@ -36,7 +36,7 @@ export default function Landing() {
             <HeartPulse size={20} />
           </div>
           <div>
-            <div className="text-sm text-brand-700 dark:text-brand-300 tracking-wide font-semibold uppercase">
+            <div className="text-xl text-brand-700 dark:text-brand-300 tracking-wide font-semibold uppercase">
               Patient Healthcare Monitoring System
             </div>
             <div className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -105,10 +105,10 @@ export default function Landing() {
                 Access the dashboard
               </h2>
               <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
-                Sign in, create an account, or continue as guest.
+                Continue as ......
               </p>
 
-              <form
+              {/* <form
                 className="mt-4 space-y-3"
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -211,13 +211,13 @@ export default function Landing() {
                 >
                   <UserPlus size={16} /> Create Account
                 </button>
-              </form>
+              </form> */}
 
               <button
                 onClick={() => handleContinue("guest")}
                 className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl border border-black/5 dark:border-white/10 bg-white/70 dark:bg-neutral-900/70 px-4 py-2 text-sm text-neutral-700 dark:text-neutral-200 shadow-sm hover:bg-white dark:hover:bg-neutral-800 transition"
               >
-                <User size={16} /> Continue as Guest
+                <User size={16} /> Move to Dashboard
               </button>
             </div>
           </div>

@@ -4,7 +4,7 @@ const sensorDataSchema = new mongoose.Schema({
     userId: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 
-        required: true,
+        required: false,
         index: true 
     },
     o2Reading: { 
@@ -32,8 +32,8 @@ const sensorDataSchema = new mongoose.Schema({
     }
 }, { timestamps: true })
 
-// Index for efficient queries by user and timestamp
-sensorDataSchema.index({ userId: 1, timestamp: -1 })
+// Index for efficient queries by timestamp
+sensorDataSchema.index({ timestamp: -1 })
 
 export default mongoose.model('SensorData', sensorDataSchema)
 

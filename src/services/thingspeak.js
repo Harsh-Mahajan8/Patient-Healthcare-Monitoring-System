@@ -48,10 +48,8 @@ export async function fetchThingSpeakData({
     const end = now;
     let start = new Date(now);
     let results;
-    if (range === '24h') start.setHours(now.getHours() - 24);
-    else if (range === '7d') start.setDate(now.getDate() - 7);
-    else if (range === '30d') start.setDate(now.getDate() - 30);
-    else start.setHours(now.getHours() - 24);
+    // Always use last 24 hours
+    start.setHours(now.getHours() - 24);
 
     try {
         if (!channelId) throw new Error('Missing channel id');

@@ -13,11 +13,10 @@ function formatTimeLabel(d) {
   if (!d) return "";
   try {
     const date = new Date(d);
+    // For 24-hour view, show only time (hours and minutes)
     return date.toLocaleString(undefined, {
       hour: "2-digit",
       minute: "2-digit",
-      month: "short",
-      day: "2-digit",
     });
   } catch {
     return String(d);
@@ -25,6 +24,14 @@ function formatTimeLabel(d) {
 }
 
 export default function ChartsPanel({ data }) {
+  // Filter data to only show last 24 hours
+  const now = new Date();
+  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  
+  const filteredData = data.filter((item) => {
+    const itemTime = item.time instanceof Date ? item.time : new Date(item.time);
+    return itemTime >= twentyFourHoursAgo;
+  });
   return (
     <div className="space-y-6">
       <div className="card p-4">
@@ -34,7 +41,7 @@ export default function ChartsPanel({ data }) {
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
-              data={data}
+              data={filteredData}
               margin={{ top: 5, right: 16, left: 0, bottom: 0 }}
             >
               <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
@@ -74,7 +81,7 @@ export default function ChartsPanel({ data }) {
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
-              data={data}
+              data={filteredData}
               margin={{ top: 5, right: 16, left: 0, bottom: 0 }}
             >
               <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
@@ -114,7 +121,7 @@ export default function ChartsPanel({ data }) {
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
-              data={data}
+              data={filteredData}
               margin={{ top: 5, right: 16, left: 0, bottom: 0 }}
             >
               <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
