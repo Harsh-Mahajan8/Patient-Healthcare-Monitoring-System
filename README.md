@@ -9,7 +9,7 @@ A modern, responsive dashboard that visualizes patient vitals (O2, Pulse, Temper
 - Recharts (line charts)
 - Framer Motion (animations)
 - Lucide Icons
-
+#** Live Link**:  https://patient-healthcare-monitoring-syste.vercel.app/
 ## Quick Start
 
 ```bash
